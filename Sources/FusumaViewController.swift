@@ -204,7 +204,6 @@ public class FusumaViewController: UIViewController {
         libraryButton.clipsToBounds = true
         videoButton.clipsToBounds = true
 
-        changeMode(FusumaMode.library)
         
         photoLibraryViewerContainer.addSubview(albumView)
         cameraShotContainer.addSubview(cameraView)
@@ -235,6 +234,8 @@ public class FusumaViewController: UIViewController {
             
             self.view.layoutIfNeeded()
         }
+        
+        changeMode(FusumaMode.library)
         
         if fusumaCropImage {
             let heightRatio = getCropHeightRatio()
