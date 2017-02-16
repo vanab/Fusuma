@@ -72,23 +72,23 @@ class ViewController: UIViewController, FusumaDelegate {
     
     func fusumaCameraRollUnauthorized() {
         
-        print("Camera roll unauthorized")
-        
-        let alert = UIAlertController(title: "Access Requested", message: "Saving image needs to access your photo album", preferredStyle: .alert)
-        
-        alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { (action) -> Void in
-            
-            if let url = URL(string:UIApplicationOpenSettingsURLString) {
-                UIApplication.shared.openURL(url)
-            }
-
-        }))
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) -> Void in
-            
-        }))
-        
-        self.present(alert, animated: true, completion: nil)
+//        print("Camera roll unauthorized")
+//        
+//        let alert = UIAlertController(title: "Access Requested", message: "Saving image needs to access your photo album", preferredStyle: .alert)
+//        
+//        alert.addAction(UIAlertAction(title: "Settings", style: .default, handler: { (action) -> Void in
+//            
+//            if let url = URL(string:UIApplicationOpenSettingsURLString) {
+//                UIApplication.shared.openURL(url)
+//            }
+//
+//        }))
+//        
+//        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action) -> Void in
+//            
+//        }))
+//        
+//        self.present(alert, animated: true, completion: nil)
     }
     
     func fusumaClosed() {

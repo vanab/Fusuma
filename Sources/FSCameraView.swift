@@ -16,6 +16,8 @@ import CoreMotion
 
 final class FSCameraView: UIView, UIGestureRecognizerDelegate {
 
+    @IBOutlet var unauthView: UIView!
+    @IBOutlet var controlsView: UIView!
     @IBOutlet weak var previewViewContainer: UIView!
     @IBOutlet weak var shotButton: UIButton!
     @IBOutlet weak var flashButton: UIButton!
@@ -72,6 +74,7 @@ final class FSCameraView: UIView, UIGestureRecognizerDelegate {
             shotButton.setImage(shotImage, for: UIControlState())
         }
 
+        self.backgroundColor = fusumaBackgroundColor
         
         self.isHidden = false
         
@@ -146,7 +149,9 @@ final class FSCameraView: UIView, UIGestureRecognizerDelegate {
         let status = AVCaptureDevice.authorizationStatus(forMediaType: AVMediaTypeVideo)
         
         if status == AVAuthorizationStatus.authorized {
-            
+            self.controlsView.isHidden = false
+            self.previewViewContainer.isHidden = false
+            self.unauthView.isHidden = true
             session?.startRunning()
             
             motionManager = CMMotionManager()
@@ -172,7 +177,14 @@ final class FSCameraView: UIView, UIGestureRecognizerDelegate {
         } else if status == AVAuthorizationStatus.denied || status == AVAuthorizationStatus.restricted {
             
             stopCamera()
+            
+            self.controlsView.isHidden = true
+            self.previewViewContainer.isHidden = true
+            self.unauthView.isHidden = false
         }
+    }
+    @IBAction func openSettings(_ sender: UIButton) {
+        UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL)
     }
     
     func stopCamera() {

@@ -22,6 +22,7 @@ final class FSAlbumView: UIView, UICollectionViewDataSource, UICollectionViewDel
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var imageCropView: FSImageCropView!
     @IBOutlet weak var imageCropViewContainer: UIView!
+    @IBOutlet var unauthView: UIView!
     
     @IBOutlet weak var collectionViewConstraintHeight: NSLayoutConstraint!
     @IBOutlet weak var imageCropViewConstraintTop: NSLayoutConstraint!
@@ -86,11 +87,17 @@ final class FSAlbumView: UIView, UICollectionViewDataSource, UICollectionViewDel
         
         collectionView.register(UINib(nibName: "FSAlbumViewCell", bundle: Bundle(for: self.classForCoder)), forCellWithReuseIdentifier: "FSAlbumViewCell")
 		collectionView.backgroundColor = fusumaBackgroundColor
+        self.backgroundColor = fusumaBackgroundColor
 		
         // Never load photos Unless the user allows to access to photo album
         checkPhotoAuth()
         
-        // Sorting condition
+        initImages()
+        
+        PHPhotoLibrary.shared().register(self)
+    }
+    
+    func initImages() {
         let options = PHFetchOptions()
         options.sortDescriptors = [
             NSSortDescriptor(key: "creationDate", ascending: false)
@@ -104,9 +111,7 @@ final class FSAlbumView: UIView, UICollectionViewDataSource, UICollectionViewDel
             collectionView.reloadData()
             collectionView.selectItem(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: UICollectionViewScrollPosition())
         }
-        
-        PHPhotoLibrary.shared().register(self)
-        
+        setAccessView()
     }
     
     deinit {
@@ -307,11 +312,16 @@ final class FSAlbumView: UIView, UICollectionViewDataSource, UICollectionViewDel
         }
     }
     
+    @IBAction func openSettings(_ sender: UIButton) {
+        UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL)
+    }
+    
+    
     
     //MARK: - PHPhotoLibraryChangeObserver
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        
         DispatchQueue.main.async {
+            print(changeInstance)
             
             let collectionChanges = changeInstance.changeDetails(for: self.images)
             if collectionChanges != nil {
@@ -404,14 +414,19 @@ private extension FSAlbumView {
     
     // Check the status of authorization for PHPhotoLibrary
     func checkPhotoAuth() {
-        
         PHPhotoLibrary.requestAuthorization { (status) -> Void in
+            self.setAccessView()
             switch status {
             case .authorized:
                 self.imageManager = PHCachingImageManager()
                 if self.images != nil && self.images.count > 0 {
                     
                     self.changeImage(self.images[0])
+                }
+                else {
+                    DispatchQueue.main.async {
+                        self.initImages()
+                    }
                 }
                 
                 DispatchQueue.main.async {
@@ -428,6 +443,21 @@ private extension FSAlbumView {
                 break
             }
         }
+    }
+    
+    func setAccessView() {
+        let status = PHPhotoLibrary.authorizationStatus()
+        switch status {
+        case .denied:
+            self.collectionView.isHidden = true
+            self.imageCropViewContainer.isHidden = true
+            self.unauthView.isHidden = false
+        default:
+            self.collectionView.isHidden = false
+            self.imageCropViewContainer.isHidden = false
+            self.unauthView.isHidden = true
+        }
+        self.layoutIfNeeded()
     }
 
     // MARK: - Asset Caching

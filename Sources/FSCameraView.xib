@@ -74,6 +74,37 @@
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="sGm-NU-u2R"/>
                     </constraints>
                 </view>
+                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8t8-lP-00N">
+                    <rect key="frame" x="0.0" y="224.5" width="400" height="150"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eK8-Ez-ysr">
+                            <rect key="frame" x="20" y="5" width="360" height="41"/>
+                            <string key="text">Нет доступа к камере.
+Его можно открыть в настройках.</string>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="0.8689647949" green="0.8689647949" blue="0.8689647949" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LhT-nE-O6c">
+                            <rect key="frame" x="129.5" y="80" width="141" height="30"/>
+                            <state key="normal" title="Открыть настройки">
+                                <color key="titleColor" red="1" green="0.34370124340000002" blue="0.2773686051" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="openSettings:" destination="iN0-l3-epB" eventType="touchUpInside" id="cfx-oC-Q4X"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="eK8-Ez-ysr" secondAttribute="trailing" constant="20" id="39Q-Fv-SqW"/>
+                        <constraint firstItem="eK8-Ez-ysr" firstAttribute="leading" secondItem="8t8-lP-00N" secondAttribute="leading" constant="20" id="3MM-4D-Dn3"/>
+                        <constraint firstAttribute="height" constant="150" id="Pew-rP-TgI"/>
+                        <constraint firstItem="LhT-nE-O6c" firstAttribute="centerX" secondItem="eK8-Ez-ysr" secondAttribute="centerX" id="WP4-zC-8Ix"/>
+                        <constraint firstItem="eK8-Ez-ysr" firstAttribute="top" secondItem="8t8-lP-00N" secondAttribute="top" constant="5" id="rBW-0X-fE3"/>
+                        <constraint firstItem="LhT-nE-O6c" firstAttribute="top" secondItem="eK8-Ez-ysr" secondAttribute="bottom" constant="34" id="sOw-gY-fR4"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
@@ -81,18 +112,23 @@
                 <constraint firstAttribute="trailing" secondItem="oUi-qP-Neb" secondAttribute="trailing" id="HM7-dt-RPz"/>
                 <constraint firstItem="oUi-qP-Neb" firstAttribute="top" secondItem="SZ8-Sp-jjd" secondAttribute="bottom" id="KEj-9P-kyb"/>
                 <constraint firstItem="oUi-qP-Neb" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Lpo-QC-qmm"/>
+                <constraint firstItem="8t8-lP-00N" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="QCO-7N-8Nu"/>
+                <constraint firstAttribute="trailing" secondItem="8t8-lP-00N" secondAttribute="trailing" id="TpY-fI-AOs"/>
                 <constraint firstItem="SZ8-Sp-jjd" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="64" id="XnG-nk-Wcr"/>
                 <constraint firstAttribute="trailing" secondItem="SZ8-Sp-jjd" secondAttribute="trailing" id="bms-F5-8H5"/>
+                <constraint firstItem="8t8-lP-00N" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="uIP-WS-Zei"/>
                 <constraint firstItem="SZ8-Sp-jjd" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="x7t-wb-WiH"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
+                <outlet property="controlsView" destination="oUi-qP-Neb" id="9UI-fb-4lT"/>
                 <outlet property="flashButton" destination="De1-Cg-kBb" id="vgA-Pn-IaF"/>
                 <outlet property="flipButton" destination="cf2-eo-TZZ" id="m0O-6p-tPs"/>
                 <outlet property="fullAspectRatioConstraint" destination="50d-Ra-Hof" id="6YW-vf-C0C"/>
                 <outlet property="previewViewContainer" destination="SZ8-Sp-jjd" id="jWl-8h-3MN"/>
                 <outlet property="shotButton" destination="o8l-Ld-Oon" id="kCQ-i4-gDf"/>
+                <outlet property="unauthView" destination="8t8-lP-00N" id="Dtk-Zg-DJP"/>
             </connections>
             <point key="canvasLocation" x="269" y="405"/>
         </view>
