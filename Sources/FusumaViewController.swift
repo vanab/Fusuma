@@ -59,8 +59,6 @@ public var fusumaFlashOffImage : UIImage? = nil
 public var fusumaFlipImage : UIImage? = nil
 public var fusumaShotImage : UIImage? = nil
 
-public var fusumaCropImage: Bool = true
-
 public var fusumaCameraRollTitle = "CAMERA ROLL"
 public var fusumaCameraTitle = "PHOTO"
 public var fusumaTitleFont = UIFont(name: "AvenirNext-DemiBold", size: 15)
@@ -190,16 +188,6 @@ public class FusumaViewController: UIViewController {
         
         changeMode(FusumaMode.library)
         
-        if fusumaCropImage {
-            let heightRatio = getCropHeightRatio()
-            cameraView.croppedAspectRatioConstraint = NSLayoutConstraint(item: cameraView.previewViewContainer, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: cameraView.previewViewContainer, attribute: NSLayoutAttribute.width, multiplier: heightRatio, constant: 0)
-
-            cameraView.fullAspectRatioConstraint.isActive = false
-            cameraView.croppedAspectRatioConstraint?.isActive = true
-        } else {
-            cameraView.fullAspectRatioConstraint.isActive = true
-            cameraView.croppedAspectRatioConstraint?.isActive = false
-        }
     }
     
     override public func viewWillAppear(_ animated: Bool) {
@@ -249,52 +237,42 @@ public class FusumaViewController: UIViewController {
     
     @IBAction func doneButtonPressed(_ sender: UIButton) {
         let view = albumView.imageCropView
+        let normalizedX = (view?.contentOffset.x)! / (view?.contentSize.width)!
+        let normalizedY = (view?.contentOffset.y)! / (view?.contentSize.height)!
+        
+        let normalizedWidth = (view?.frame.width)! / (view?.contentSize.width)!
+        let normalizedHeight = (view?.frame.height)! / (view?.contentSize.height)!
+        
+        let cropRect = CGRect(x: normalizedX, y: normalizedY, width: normalizedWidth, height: normalizedHeight)
+        
+        DispatchQueue.global(qos: .default).async(execute: {
+            
+            let options = PHImageRequestOptions()
+            options.deliveryMode = .highQualityFormat
+            options.isNetworkAccessAllowed = true
+            options.normalizedCropRect = cropRect
+            options.resizeMode = .exact
+            
+            let targetWidth = floor(CGFloat(self.albumView.phAsset.pixelWidth) * cropRect.width)
+            let targetHeight = floor(CGFloat(self.albumView.phAsset.pixelHeight) * cropRect.height)
+            let dimensionW = max(min(targetHeight, targetWidth), 1024 * UIScreen.main.scale)
+            let dimensionH = dimensionW * self.getCropHeightRatio()
 
-        if fusumaCropImage {
-            let normalizedX = (view?.contentOffset.x)! / (view?.contentSize.width)!
-            let normalizedY = (view?.contentOffset.y)! / (view?.contentSize.height)!
+            let targetSize = CGSize(width: dimensionW, height: dimensionH)
             
-            let normalizedWidth = (view?.frame.width)! / (view?.contentSize.width)!
-            let normalizedHeight = (view?.frame.height)! / (view?.contentSize.height)!
-            
-            let cropRect = CGRect(x: normalizedX, y: normalizedY, width: normalizedWidth, height: normalizedHeight)
-            
-            DispatchQueue.global(qos: .default).async(execute: {
+            PHImageManager.default().requestImage(for: self.albumView.phAsset, targetSize: targetSize,
+            contentMode: .aspectFill, options: options) {
+                result, info in
                 
-                let options = PHImageRequestOptions()
-                options.deliveryMode = .highQualityFormat
-                options.isNetworkAccessAllowed = true
-                options.normalizedCropRect = cropRect
-                options.resizeMode = .exact
-                
-                let targetWidth = floor(CGFloat(self.albumView.phAsset.pixelWidth) * cropRect.width)
-                let targetHeight = floor(CGFloat(self.albumView.phAsset.pixelHeight) * cropRect.height)
-                let dimensionW = max(min(targetHeight, targetWidth), 1024 * UIScreen.main.scale)
-                let dimensionH = dimensionW * self.getCropHeightRatio()
-
-                let targetSize = CGSize(width: dimensionW, height: dimensionH)
-                
-                PHImageManager.default().requestImage(for: self.albumView.phAsset, targetSize: targetSize,
-                contentMode: .aspectFill, options: options) {
-                    result, info in
+                DispatchQueue.main.async(execute: {
+                    self.delegate?.fusumaImageSelected(result!, source: self.mode)
                     
-                    DispatchQueue.main.async(execute: {
-                        self.delegate?.fusumaImageSelected(result!, source: self.mode)
-                        
-                        self.dismiss(animated: true, completion: {
-                            self.delegate?.fusumaDismissedWithImage(result!, source: self.mode)
-                        })
+                    self.dismiss(animated: true, completion: {
+                        self.delegate?.fusumaDismissedWithImage(result!, source: self.mode)
                     })
-                }
-            })
-        } else {
-            print("no image crop ")
-            delegate?.fusumaImageSelected((view?.image)!, source: mode)
-            
-            self.dismiss(animated: true, completion: {
-                self.delegate?.fusumaDismissedWithImage((view?.image)!, source: self.mode)
-            })
-        }
+                })
+            }
+        })
     }
     
 }
@@ -387,7 +365,7 @@ private extension FusumaViewController {
         button.tintColor = fusumaTintColor
         self.leftSpace.constant = button.frame.origin.x
         UIView.animate(withDuration: 0.15) { 
-            self.view.layoutIfNeeded()
+//            self.botView.layoutIfNeeded()
         }
     }
 }

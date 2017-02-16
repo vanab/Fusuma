@@ -415,7 +415,9 @@ private extension FSAlbumView {
     // Check the status of authorization for PHPhotoLibrary
     func checkPhotoAuth() {
         PHPhotoLibrary.requestAuthorization { (status) -> Void in
-            self.setAccessView()
+            DispatchQueue.main.async(execute: { () -> Void in
+                self.setAccessView()
+            })
             switch status {
             case .authorized:
                 self.imageManager = PHCachingImageManager()

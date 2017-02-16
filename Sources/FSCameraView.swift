@@ -23,7 +23,6 @@ final class FSCameraView: UIView, UIGestureRecognizerDelegate {
     @IBOutlet weak var flashButton: UIButton!
     @IBOutlet weak var flipButton: UIButton!
     @IBOutlet weak var fullAspectRatioConstraint: NSLayoutConstraint!
-    var croppedAspectRatioConstraint: NSLayoutConstraint?
     
     weak var delegate: FSCameraViewDelegate? = nil
     
@@ -251,12 +250,8 @@ final class FSCameraView: UIView, UIGestureRecognizerDelegate {
                     
                                         
                     DispatchQueue.main.async(execute: { () -> Void in
-                        if fusumaCropImage {
-                            let resizedImage = UIImage(cgImage: imageRef!, scale: sw/iw, orientation: image.imageOrientation)
-                            delegate.cameraShotFinished(resizedImage)
-                        } else {
-                            delegate.cameraShotFinished(image)
-                        }
+                        let resizedImage = UIImage(cgImage: imageRef!, scale: sw/iw, orientation: image.imageOrientation)
+                        delegate.cameraShotFinished(resizedImage)
                         
                         self.session       = nil
                         self.device        = nil
