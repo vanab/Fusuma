@@ -127,7 +127,7 @@ final class FSAlbumView: UIView, UICollectionViewDataSource, UICollectionViewDel
         return true
     }
     
-    func panned(_ sender: UITapGestureRecognizer) {
+    @objc func panned(_ sender: UITapGestureRecognizer) {
         
         if sender.state == UIGestureRecognizerState.began {
             
